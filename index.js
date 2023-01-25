@@ -10,8 +10,8 @@ const TOKEN = process.env.TOKEN
 
 const LOAD_SLASH = process.argv[2] == "load"
 
-const CLIENT_ID = "1025538131811909642"
-const GUILD_ID = "957442882434920458"
+const CLIENT_ID = process.env.CLIENT_ID
+const GUILD_ID = process.env.GUILD_ID
 
 const client = new Discord.Client({
     intents: [
@@ -61,7 +61,7 @@ else {
             if (!interaction.isCommand()) return
 
             const slashcmd = client.slashcommands.get(interaction.commandName)
-            if (!slashcmd) interaction.reply("Not a valid slash command")
+            if (!slashcmd) interaction.reply("No es un comando de slash válido")
 
             await interaction.deferReply()
             await slashcmd.run({ client, interaction })
