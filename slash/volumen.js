@@ -20,7 +20,7 @@ module.exports = {
     const volume = interaction.options.getInteger("vol");
 
     if (!volume)
-      return interaction.reply(`Volumen actual is ${queue.node.volume}`);
+      return interaction.reply(`Volumen actual es ${queue.node.volume}`);
 
     queue.node.setVolume(volume);
     return interaction.reply(`Volumen cambiado a ${volume}`);
