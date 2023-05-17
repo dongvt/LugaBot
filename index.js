@@ -34,7 +34,7 @@ client.player = new Player(client, {
 });
 
 client.player.events.on("playerStart", (queue, track) =>
-  queue.metadata.channel.send(`🎶 | Now playing **${track.title}**!`)
+  queue.metadata.channel.send(`🎶 | Ahora reproduciendo **${track.title}**!`)
 );
 client.player.events.on("error", (queue, error) =>
   console.log(

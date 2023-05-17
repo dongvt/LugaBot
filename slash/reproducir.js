@@ -19,17 +19,6 @@ module.exports = {
     )
     .addSubcommand((subcommand) =>
       subcommand
-        .setName("playlist")
-        .setDescription("Reproduce una playlist a partir de una url")
-        .addStringOption((option) =>
-          option
-            .setName("url")
-            .setDescription("url de la playlist")
-            .setRequired(true)
-        )
-    )
-    .addSubcommand((subcommand) =>
-      subcommand
         .setName("buscar")
         .setDescription("Busca una canción de acuerdo a los terminos buscados")
         .addStringOption((option) =>
@@ -108,7 +97,7 @@ module.exports = {
      *
      * **************** ******** *******************/
     const url = interaction.options.getString("url");
-    console.log(url)
+    console.log(url);
     const result = await client.player.search(url, {
       requestedBy: interaction.user,
       searchEngine: QueryType.AUTO,
@@ -117,16 +106,16 @@ module.exports = {
     //No valid url
     if (!result.hasTracks()) {
       return interaction.reply({
-        embeds: [new EmbedBuilder().setTitle("No Results").setTimestamp()],
+        embeds: [new EmbedBuilder().setTitle("Sin resultados").setTimestamp()],
       });
     }
 
     await interaction.deferReply();
     await interaction.editReply({
-      content: `Loading a: ${result.playlist ? "playlist" : "track"}`,
+      content: `Cargando una: ${result.playlist ? "playlist" : "canción"}`,
     });
 
-    await interaction.client.player.play(
+    const played = await interaction.client.player.play(
       interaction.member.voice.channel?.id,
       result,
       {
@@ -143,6 +132,43 @@ module.exports = {
       }
     );
 
+    const embed = new EmbedBuilder();
+
+    const totalMinutes = played.track.playlist
+      ? played.track.playlist.tracks.reduce(
+          (acu, curr) => curr.durationMS + acu,
+          0
+        ) /
+        1000 /
+        60
+      : played.track.durationMS;
+    const totalTimeStr = `Lista completa en ${totalMinutes.toFixed(2)} minutos`;
+    embed
+      .setDescription(
+        `${
+          played.track.playlist
+            ? `**Varias canciones** desde: **${played.track.playlist.title}**`
+            : `**${played.track.title}**`
+        }`
+      )
+      .setThumbnail(
+        `${
+          played.track.playlist
+            ? `${played.track.playlist.url}`
+            : `${played.track.thumbnail}`
+        }`
+      )
+      .setColor(`#00ff08`)
+      .setTimestamp()
+      .setFooter({
+        text: `Duración: ${
+          played.track.playlist ? `${totalTimeStr}` : `${played.track.duration}`
+        } | Lag Del Event Loop ${interaction.client.player.eventLoopLag.toFixed(
+          0
+        )}`,
+      });
+
+    return interaction.editReply({ embeds: [embed] });
     //return interaction.editReply("Sin resultados");
   },
 };

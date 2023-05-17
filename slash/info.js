@@ -1,25 +1,28 @@
-const { SlashCommandBuilder } = require("@discordjs/builders")
-const { MessageEmbed } = require("discord.js")
+const { SlashCommandBuilder } = require("@discordjs/builders");
+const { EmbedBuilder } = require("discord.js");
 
 module.exports = {
-	data: new SlashCommandBuilder().setName("info").setDescription("Muestra información sobre la canción actual"),
-	run: async ({ client, interaction }) => {
-		const queue = client.player.getQueue(interaction.guildId)
+  data: new SlashCommandBuilder()
+    .setName("info")
+    .setDescription("Muestra información sobre la canción actual"),
+  run: async ({ client, interaction }) => {
+    const queue = client.player.nodes.get(interaction.guildId);
 
-		if (!queue) return await interaction.editReply("No hay canciones en la lista")
+    if (!queue || !queue.isPlaying())
+      return interaction.reply("No hay canciones en la lista");
 
-		let bar = queue.createProgressBar({
-			queue: false,
-			length: 19,
-		})
+    let bar = queue.node.createProgressBar();
 
-        const song = queue.current
+    const song = queue.currentTrack;
 
-		await interaction.editReply({
-			embeds: [new MessageEmbed()
-            .setThumbnail(song.thumbnail)
-            .setDescription(`Reproduciendo [${song.title}](${song.url})\n\n` + bar)
-        ],
-		})
-	},
-}
+    return interaction.reply({
+      embeds: [
+        new EmbedBuilder()
+          .setThumbnail(song.thumbnail)
+          .setDescription(
+            `Reproduciendo [${song.title}](${song.url})\n\n` + bar
+          ),
+      ],
+    });
+  },
+};

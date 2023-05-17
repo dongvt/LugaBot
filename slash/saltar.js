@@ -4,17 +4,13 @@ const { MessageEmbed } = require("discord.js")
 module.exports = {
 	data: new SlashCommandBuilder().setName("saltar").setDescription("Salta la canción actual"),
 	run: async ({ client, interaction }) => {
-		const queue = client.player.getQueue(interaction.guildId)
+		const queue = client.player.nodes.get(interaction.guildId)
 
-		if (!queue) return await interaction.editReply("No hay canciones en la lista")
+		if (!queue || !queue.isPlaying()) return interaction.reply("No hay canciones en la lista")
 
-        const currentSong = queue.current
+        //const currentSong = queue.current
 
-		queue.skip()
-        await interaction.editReply({
-            embeds: [
-                new MessageEmbed().setDescription(`${currentSong.title} saltada!`).setThumbnail(currentSong.thumbnail)
-            ]
-        })
+		queue.node.skip()
+        return interaction.reply({content: `Se ha saltado ${queue.currentTrack}`})
 	},
 }
