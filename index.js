@@ -2,7 +2,6 @@ const {
   Client,
   Collection,
   GatewayIntentBits,
-  EmbedBuilder,
 } = require("discord.js");
 
 const dotenv = require("dotenv");
@@ -10,6 +9,7 @@ const { REST } = require("@discordjs/rest");
 const { Routes } = require("discord-api-types/v9");
 const fs = require("fs");
 const { Player } = require("discord-player");
+const { YoutubeiExtractor } = require("discord-player-youtubei")
 
 dotenv.config();
 const TOKEN = process.env.TOKEN;
@@ -23,12 +23,12 @@ const client = new Client({
 
 client.slashcommands = new Collection();
 client.player = new Player(client, {
-  deafenOnJoin: true,
-  lagMonitor: 1000,
-  ytdlOptions: {
-    quality: "highestaudio",
-    highWaterMark: 1 << 25,
-  },
+  // deafenOnJoin: true,
+  // lagMonitor: 1000,
+  // ytdlOptions: {
+  //   quality: "highestaudio",
+  //   highWaterMark: 1 << 25,
+  // },
 });
 
 client.player.events.on("playerStart", (queue, track) =>
@@ -71,7 +71,8 @@ rest
     }
   });
 client.on("ready", async () => {
-  await client.player.extractors.loadDefault();
+  await client.player.extractors.register(YoutubeiExtractor, {})
+  await client.player.extractors.loadDefault((ext) => ext !== 'YouTubeExtractor');
   console.log(`Logged in as ${client.user.tag}`);
 
 });
