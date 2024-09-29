@@ -21,7 +21,7 @@ jobs:
       - name: Authenticate to Google Cloud with Workload Identity Federation
         uses: google-github-actions/auth@v2
         with:
-          workload_identity_provider: "projects/turing-course-388300/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
+          workload_identity_provider: "projects/1052750188063/locations/global/workloadIdentityPools/github-pool/providers/github-provider"
           service_account: "github-lugabot@turing-course-388300.iam.gserviceaccount.com"
       
       - name: SSH into VM and restart bot
