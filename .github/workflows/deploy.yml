@@ -26,4 +26,4 @@ jobs:
       
       - name: SSH into VM and restart bot
         run: |
-            gcloud compute ssh bot-provider --zone us-east1-b --command "tmux ls"
+            gcloud compute ssh govertfabiancarre@bot-provider --zone us-east1-b --command "tmux ls"
